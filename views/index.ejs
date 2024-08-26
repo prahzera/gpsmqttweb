@@ -14,6 +14,8 @@
     <select id="timeRange">
       <option value="5">Últimos 5 minutos</option>
       <option value="10">Últimos 10 minutos</option>
+      <option value="15">Últimos 15 minutos</option>
+      <option value="30">Últimos 30 minutos</option>
       <option value="60">Última hora</option>
       <option value="180">Últimas 3 horas</option>
       <option value="720">Últimas 12 horas</option>
@@ -50,8 +52,8 @@
     };
 
     // Función para solicitar y mostrar el historial basado en el intervalo seleccionado
-    const updateRoute = (minutes) => {
-      fetch(`/route/${minutes}`)
+    const updateRoute = (hours) => {
+      fetch(`/route/${hours}`)
         .then(response => response.json())
         .then(data => drawRoute(data));
     };
@@ -66,27 +68,25 @@
         }
       });
 
-    // Solicita la ruta de las últimas X minutos (por ejemplo, 24 horas) y dibuja
-    updateRoute(1440); // Inicialmente muestra el historial del último día
+    // Solicita la ruta de las últimas X horas (por ejemplo, 24 horas) y dibuja
+    const initialHours = document.getElementById('timeRange').value;
+    updateRoute(initialHours);
 
     // Escucha las nuevas coordenadas del servidor
     socket.on('coordinates', (coord) => {
       // Actualiza la última coordenada completa
-      if (lastCoords.lat !== null && lastCoords.lon !== null) {
-        marker.setLatLng([coord.lat, coord.lon]);
-        map.setView([coord.lat, coord.lon]);
+      marker.setLatLng([coord.lat, coord.lon]);
+      map.setView([coord.lat, coord.lon]);
 
-        // Actualizar el historial en el mapa con el intervalo actual
-        const timeRange = document.getElementById('timeRange').value;
-        updateRoute(timeRange);
-      }
-      lastCoords = { lat: coord.lat, lon: coord.lon }; // Almacena la coordenada actual
+      // Actualizar el historial en el mapa con el intervalo actual
+      const timeRange = document.getElementById('timeRange').value;
+      updateRoute(timeRange);
     });
 
     // Maneja el cambio en la selección del intervalo de tiempo
     document.getElementById('timeRange').addEventListener('change', (event) => {
-      const minutes = event.target.value;
-      updateRoute(minutes);
+      const hours = event.target.value;
+      updateRoute(hours);
     });
   </script>
 </body>

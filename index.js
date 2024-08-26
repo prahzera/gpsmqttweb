@@ -18,7 +18,16 @@ app.set("views", path.join(__dirname, "views"));
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Configuración del cliente MQTT
+/* // Configuración de la conexión
+const options = {
+  username: 'ArthurRios',
+  password: 'arthuralex99',
+};
+
+// Conéctate al servidor MQTT
+const client = mqtt.connect('mqtt://broker.hivemq.com', options); */
+
+// Conéctate al servidor MQTT debug
 const mqttClient = mqtt.connect("mqtt://localhost", {});
 
 let coordinates = { lat: null, lon: null };
