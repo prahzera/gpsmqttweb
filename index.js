@@ -47,9 +47,9 @@ const writeCoordinates = (newCoord) => {
 };
 
 // Función para filtrar coordenadas por tiempo
-const filterCoordinatesByTime = (hours) => {
+const filterCoordinatesByTime = (minutes) => {
   const coords = readCoordinates();
-  const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+  const cutoffTime = new Date(Date.now() - minutes * 60 * 1000);
 
   return coords.filter(coord => new Date(coord.timestamp) >= cutoffTime);
 };
@@ -103,10 +103,10 @@ app.get("/last-location", (req, res) => {
   }
 });
 
-// Ruta para obtener la ruta de las últimas X horas
-app.get("/route/:hours", (req, res) => {
-  const hours = parseInt(req.params.hours, 10);
-  const filteredCoords = filterCoordinatesByTime(hours);
+// Ruta para obtener la ruta de las últimas X minutos
+app.get("/route/:minutes", (req, res) => {
+  const minutes = parseInt(req.params.minutes, 10);
+  const filteredCoords = filterCoordinatesByTime(minutes);
   res.json(filteredCoords);
 });
 
