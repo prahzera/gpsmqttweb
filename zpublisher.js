@@ -14,7 +14,7 @@ const lonVariation = 0.001;
 client.on('connect', () => {
   console.log('Conectado al servidor MQTT local');
 
-  // Publica coordenadas aleatorias dentro del rango de variación cada 5 segundos
+  // Publica coordenadas aleatorias dentro del rango de variación cada 60 segundos
   setInterval(() => {
     const lat = (baseLat + (Math.random() * latVariation * 2 - latVariation)).toFixed(6);
     const lon = (baseLon + (Math.random() * lonVariation * 2 - lonVariation)).toFixed(6);
@@ -26,7 +26,7 @@ client.on('connect', () => {
     client.publish('longps/perro1', lon.toString(), () => {
       console.log('Publicado longitud:', lon);
     });
-  }, 5000); // Cada 5 segundos
+  }, 10000); // Cada 60 segundos
 });
 
 client.on('error', (err) => {
