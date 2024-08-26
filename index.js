@@ -18,17 +18,17 @@ app.set("views", path.join(__dirname, "views"));
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-/* // Configuración de la conexión
+// Configuración de la conexión
 const options = {
   username: 'ArthurRios',
   password: 'arthuralex99',
 };
 
 // Conéctate al servidor MQTT
-const client = mqtt.connect('mqtt://broker.hivemq.com', options); */
+const mqttClient = mqtt.connect('mqtt://broker.hivemq.com', options);
 
 // Conéctate al servidor MQTT debug
-const mqttClient = mqtt.connect("mqtt://localhost", {});
+//const mqttClient = mqtt.connect("mqtt://localhost", {});
 
 let coordinates = { lat: null, lon: null };
 
@@ -77,9 +77,15 @@ mqttClient.on("connect", () => {
 
 mqttClient.on("message", (topic, message) => {
   if (topic === "longps/perro1") {
-    coordinates.lon = parseFloat(message.toString());
+    const lon = parseFloat(message.toString());
+    if (lon !== 0) {
+      coordinates.lon = lon;
+    }
   } else if (topic === "latgps/perro1") {
-    coordinates.lat = parseFloat(message.toString());
+    const lat = parseFloat(message.toString());
+    if (lat !== 0) {
+      coordinates.lat = lat;
+    }
   }
 
   // Enviar coordenadas al cliente solo si ambas están disponibles
