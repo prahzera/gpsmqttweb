@@ -53,7 +53,7 @@
     // Escucha las nuevas coordenadas del servidor
     socket.on('coordinates', (coord) => {
       marker.setLatLng([coord.lat, coord.lon]);
-      map.setView([coord.lat, coord.lon], 16);
+      map.setView([coord.lat, coord.lon]);
 
       // Añadir la coordenada al historial y actualizar el mapa
       fetch('/route/24')
