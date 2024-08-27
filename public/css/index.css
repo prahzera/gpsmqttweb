@@ -5,22 +5,85 @@ body {
     background-color: #f4f4f4;
 }
 
+/* Estilos para el contenedor del encabezado */
 .header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.header img {
-    max-width: 150px;
-    /* Ajusta el tamaño del logo según sea necesario */
-    height: auto;
-}
-
-#map {
-    height: 60vh;
+    position: relative;
     width: 100%;
-    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    /* Centra el logo horizontalmente */
+    padding: 10px;
+    box-sizing: border-box;
 }
+
+/* Estilos para el logo */
+.header img {
+    height: 15vh;
+    /* Ajusta la altura del logo a 15% de la altura de la ventana */
+    max-width: 100%;
+    /* Asegura que el logo no se desborde */
+    object-fit: contain;
+    /* Mantiene la proporción del logo */
+}
+
+/* Estilos para el botón de cierre de sesión */
+.logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f44336;
+    /* Color de fondo del botón */
+    color: white;
+    /* Color del texto */
+    padding: 10px 20px;
+    /* Espaciado interno del botón */
+    border: none;
+    /* Sin borde */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    text-decoration: none;
+    /* Sin subrayado */
+    font-weight: bold;
+    /* Texto en negrita */
+}
+
+.logout-button:hover {
+    background-color: #c62828;
+    /* Color de fondo al pasar el mouse */
+}
+
+
+/* Contenedor del mapa */
+.map-container {
+    display: flex;
+    /* Usa flexbox para centrar el contenido */
+    justify-content: center;
+    /* Centra horizontalmente el contenido */
+    align-items: center;
+    /* Centra verticalmente el contenido */
+    padding: 5px;
+    /* Espacio alrededor del mapa */
+    box-sizing: border-box;
+    /* Incluye el padding en el tamaño total */
+    width: calc(100% - 10px);
+    /* Ancho del contenedor ajustado para compensar el padding */
+    height: 60vh;
+    /* Altura del contenedor */
+    margin: 0 auto;
+    /* Asegura que el contenedor se centre horizontalmente */
+}
+
+/* Estilo para el mapa */
+#map {
+    height: calc(100% - 10px);
+    /* Altura ajustada para compensar el padding */
+    width: 100%;
+    /* Ancho total del contenedor */
+    border-radius: 8px;
+    /* Bordes redondeados */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 
 .controls-container {
     display: flex;
@@ -116,4 +179,74 @@ body {
     #map {
         height: 40vh;
     }
+}
+
+
+
+
+.dark-mode-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #e0e0e0;
+    /* Color de fondo del botón en modo claro */
+    color: #000;
+    /* Color del texto en modo claro */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+
+/* Estilos para el modo oscuro */
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode p {
+    color: #b1b1b1;
+}
+
+.dark-mode .distance-summary p,
+.dark-mode .distance-summary span {
+    color: #e0e0e0;
+}
+
+.dark-mode .header {
+    background-color: #1e1e1e;
+}
+
+.dark-mode .header img {
+    filter: none;
+    /* No invertir el color del logo */
+}
+
+.dark-mode .controls,
+.dark-mode .distance-summary,
+.dark-mode .distance-resume {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode .controls select {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+.dark-mode #map {
+    border: 1px solid #333;
+}
+
+.dark-mode .dark-mode-toggle {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+.dark-mode .dark-mode-toggle:hover {
+    background-color: #555;
 }

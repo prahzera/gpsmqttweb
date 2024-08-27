@@ -1,0 +1,88 @@
+body {
+  background: #f4f4f9;
+  /* Fondo suave */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  background: #ffffff;
+  /* Fondo blanco para el formulario */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+  width: 100%;
+  max-width: 400px;
+  /* Ancho máximo del formulario */
+}
+
+.logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+img {
+  max-width: 20vh;
+}
+
+h1 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin: 10px 0 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+button {
+  background: #5a7167;
+  /* Color del botón */
+  color: #ffffff;
+  /* Color del texto del botón */
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #4a5d4e;
+  /* Color del botón en hover */
+}
+
+.error-message {
+  color: #e74c3c;
+  /* Color rojo para mensajes de error */
+  text-align: center;
+}
+
+.success-message {
+  color: #2ecc71;
+  /* Color verde para mensajes de éxito */
+  text-align: center;
+}

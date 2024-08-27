@@ -4,10 +4,18 @@ const mqtt = require("mqtt"); // Importa el módulo MQTT para conectarse a un se
 const http = require("http"); // Importa el módulo HTTP para crear un servidor HTTP
 const socketIo = require("socket.io"); // Importa el módulo Socket.IO para la comunicación en tiempo real
 const fs = require("fs"); // Importa el módulo FS para manejar operaciones de archivos
+const session = require('express-session');
 
 const app = express(); // Crea una aplicación Express
 const server = http.createServer(app); // Crea un servidor HTTP utilizando Express
 const io = socketIo(server); // Asocia Socket.IO con el servidor HTTP
+
+app.use(session({
+  secret: 'tu_clave_secreta', // Cambia esto por una clave secreta adecuada
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Cambia a true si usas HTTPS
+}));
 
 const port = 3000; // Define el puerto en el que el servidor escuchará las conexiones
 
@@ -17,6 +25,9 @@ app.set("views", path.join(__dirname, "views")); // Define la ruta a las vistas 
 
 // Servir archivos estáticos desde el directorio "public"
 app.use(express.static(path.join(__dirname, "public")));
+
+// Configuración para analizar datos del formulario
+app.use(express.urlencoded({ extended: true }));
 
 // Configuración de la conexión MQTT
 const options = {
@@ -149,11 +160,20 @@ const calculateDistances = (coords) => {
   };
 };
 
-// Ruta para la página principal
-app.get("/", (req, res) => {
-  const coordinates = readCoordinates(); // Lee todas las coordenadas almacenadas
-  const { totalDistance, dailyDistances, monthlyDistances } = calculateDistances(coordinates); // Calcula las distancias
-  res.render("index", {
+// Middleware para verificar si el usuario está autenticado
+const requireAuth = (req, res, next) => {
+  if (req.session.user) {
+    next(); // El usuario está autenticado, continúa a la siguiente ruta
+  } else {
+    res.redirect('/login'); // Redirige al login si no está autenticado
+  }
+};
+
+// Protege la ruta principal con el middleware de autenticación
+app.get('/', requireAuth, (req, res) => {
+  const coordinates = readCoordinates();
+  const { totalDistance, dailyDistances, monthlyDistances } = calculateDistances(coordinates);
+  res.render('index', {
     totalDistance,
     dailyDistances,
     monthlyDistances
@@ -176,6 +196,56 @@ app.get("/route/:minutes", (req, res) => {
   const filteredCoords = filterCoordinatesByTime(minutes); // Filtra las coordenadas por el tiempo especificado
   res.json(filteredCoords); // Envía las coordenadas filtradas como JSON
 });
+
+
+// Define la ruta al archivo profiles.json
+const profilesFilePath = path.join(__dirname, 'profiles.json');
+
+// Función para leer perfiles desde el archivo profiles.json
+const readProfiles = () => {
+  if (fs.existsSync(profilesFilePath)) { // Verifica si el archivo existe
+    const data = fs.readFileSync(profilesFilePath); // Lee el archivo
+    return JSON.parse(data); // Devuelve los perfiles como un objeto JSON
+  }
+  return {}; // Devuelve un objeto vacío si el archivo no existe
+};
+
+const profiles = readProfiles(); // Lee los perfiles al inicio
+console.log('Perfiles cargados:', profiles); // Agrega este log para verificar el contenido del archivo
+
+app.get('/login', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/'); // Redirige si ya está autenticado
+  }
+  res.render('login');
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body; // Extrae el nombre de usuario y contraseña del formulario
+
+  console.log('Intento de inicio de sesión:', { username, password }); // Agrega este log para verificar los datos enviados
+
+  if (profiles[username] && profiles[username].contraseña === password) {
+    req.session.user = username; // Guarda el usuario en la sesión
+    console.log('Inicio de sesión exitoso para:', username); // Agrega este log para confirmar el inicio de sesión
+    res.redirect('/'); // Redirige al usuario a la página principal
+  } else {
+    console.log('Credenciales incorrectas para:', username); // Agrega este log para errores de inicio de sesión
+    res.redirect('/login'); // Redirige al login si las credenciales son incorrectas
+  }
+});
+
+
+// Ruta para cerrar sesión
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send('Could not log out.');
+    }
+    res.redirect('/login');
+  });
+});
+
 
 // Inicia el servidor y lo pone a escuchar en el puerto especificado
 server.listen(port, () => {

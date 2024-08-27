@@ -1,0 +1,29 @@
+<!-- views/login.ejs -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/login.css"> <!-- Incluye el CSS -->
+</head>
+
+<body>
+    <div class="container">
+       <div class="logo">
+        <img src="/images/logo.png" alt="logo" srcset="">
+       </div>
+        <h1>Iniciar Sesión</h1>
+        <form action="/login" method="post">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Entrar</button>
+        </form>
+
+    </div>
+</body>
+
+</html>
