@@ -94,3 +94,28 @@ socket.on('coordinates', (coord) => {
     const timeRange = document.getElementById('timeRange').value;
     updateRoute(timeRange);
 });
+
+// Crear un control personalizado para centrar el mapa
+L.Control.CustomButton = L.Control.extend({
+    onAdd: function (map) {
+      var container = L.DomUtil.create('div', 'leaflet-control-custom');
+      var img = L.DomUtil.create('img', '', container);
+      img.src = '/images/gps.png'; // Ruta al icono de centrar ubicación
+  
+      L.DomEvent.on(container, 'click', function () {
+        // Centrar el mapa en la última ubicación recibida
+        if (marker.getLatLng()) {
+          map.setView(marker.getLatLng(), map.getZoom());
+        }
+      });
+  
+      return container;
+    }
+  });
+  
+  L.control.customButton = function(opts) {
+    return new L.Control.CustomButton(opts);
+  };
+  
+  L.control.customButton().addTo(map);
+  

@@ -20,7 +20,6 @@ body {
     height: 600px;
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .controls-container {
@@ -89,6 +88,29 @@ body {
 .distance-resume span {
     font-weight: bold;
 }
+
+/* Añade esto a tu archivo CSS */
+.leaflet-control-custom {
+    background-color: #5c7067b3;
+    border: 2px solid #5a7167;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.leaflet-control-custom img {
+    width: 30px;
+    height: 30px;
+}
+
 
 @media (max-width: 768px) {
     #map {

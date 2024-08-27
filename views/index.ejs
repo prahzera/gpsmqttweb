@@ -28,16 +28,25 @@
     </div>
 
     <div class="distance-summary">
-      <p>Distancia recorrida en el intervalo seleccionado: <span id="distance-current"><%= totalDistance ? totalDistance.toFixed(2) : '0' %> km</span></p>
+      <p>Distancia recorrida en el intervalo seleccionado: <span id="distance-current">
+          <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
+        </span></p>
     </div>
   </div>
 
   <div id="map"></div>
 
   <div class="distance-resume">
-    <p>Distancia recorrida hoy: <span id="distance-day"><%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km</span></p>
-    <p>Distancia recorrida esta semana: <span id="distance-week"><%= Object.values(dailyDistances).reduce((a, b) => a + b, 0).toFixed(2) %> km</span></p>
-    <p>Distancia recorrida este mes: <span id="distance-month"><%= Object.values(monthlyDistances).reduce((a, b) => a + b, 0).toFixed(2) %> km</span></p>
+    <p>Distancia recorrida hoy: <span id="distance-day">
+        <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new
+          Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
+      </span></p>
+    <p>Distancia recorrida esta semana: <span id="distance-week">
+        <%= Object.values(dailyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
+      </span></p>
+    <p>Distancia recorrida este mes: <span id="distance-month">
+        <%= Object.values(monthlyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
+      </span></p>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
