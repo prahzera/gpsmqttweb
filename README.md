@@ -53,9 +53,9 @@ Sigue estos pasos para configurar el proyecto en tu entorno local:
 
 ## 🕹️ Uso
 
-1. **Visualización de Mapas**: Al acceder a la aplicación, verás un mapa con la ubicación actual de la entidad rastreada.
-2. **Historial de Rutas**: Selecciona un intervalo de tiempo desde el menú desplegable para ver las rutas históricas en el mapa.
-3. **Resumen de Distancias**: En la parte inferior del mapa, se muestran las distancias recorridas hoy, esta semana y este mes.
+   1. **Visualización de Mapas**: Al acceder a la aplicación, verás un mapa con la ubicación actual de la entidad rastreada.
+   2. **Historial de Rutas**: Selecciona un intervalo de tiempo desde el menú desplegable para ver las rutas históricas en el mapa.
+   3. **Resumen de Distancias**: En la parte inferior del mapa, se muestran las distancias recorridas hoy, esta semana y este mes.
 
 
 ## 📂 Estructura del Proyecto
