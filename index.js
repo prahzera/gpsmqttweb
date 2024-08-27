@@ -47,7 +47,7 @@ const writeCoordinates = (newCoord) => {
   const coords = readCoordinates();
   coords.push(newCoord);
   fs.writeFileSync(dataFilePath, JSON.stringify(coords, null, 2));
-  
+
   // Actualiza el archivo de la última coordenada
   fs.writeFileSync(lastCoordFilePath, JSON.stringify(newCoord, null, 2));
 };
@@ -91,7 +91,7 @@ mqttClient.on("message", (topic, message) => {
       lon: coordinates.lon,
       timestamp: new Date().toISOString()
     };
-    
+
     writeCoordinates(newCoord); // Guarda las coordenadas en el archivo JSON
     io.emit("coordinates", newCoord); // Envía las coordenadas completas al cliente
     // Reinicia las coordenadas para el siguiente conjunto de datos
@@ -99,9 +99,66 @@ mqttClient.on("message", (topic, message) => {
   }
 });
 
+// Función para calcular distancia entre dos coordenadas usando la fórmula de Haversine
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radio de la Tierra en km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+const calculateDistances = (coords) => {
+  let totalDistance = 0;
+  let dailyDistances = {};
+  let monthlyDistances = {};
+
+  // Calcular distancias y actualizar los objetos
+  coords.forEach((coord, index) => {
+    // Ejemplo de cómo calcular la distancia
+    if (index > 0) {
+      const prevCoord = coords[index - 1];
+      const distance = haversineDistance(
+        prevCoord.lat,
+        prevCoord.lon,
+        coord.lat,
+        coord.lon
+      );
+      totalDistance += distance;
+
+      // Actualizar distancias diarias y mensuales
+      const date = new Date(coord.timestamp);
+      const day = date.toISOString().split('T')[0];
+      const month = date.getFullYear() + '-' + (date.getMonth() + 1);
+
+      if (!dailyDistances[day]) dailyDistances[day] = 0;
+      dailyDistances[day] += distance;
+
+      if (!monthlyDistances[month]) monthlyDistances[month] = 0;
+      monthlyDistances[month] += distance;
+    }
+  });
+
+  return {
+    totalDistance,
+    dailyDistances,
+    monthlyDistances
+  };
+};
+
 // Ruta para la página principal
 app.get("/", (req, res) => {
-  res.render("index");
+  const coordinates = readCoordinates();
+  const { totalDistance, dailyDistances, monthlyDistances } = calculateDistances(coordinates);
+  res.render("index", {
+    totalDistance,
+    dailyDistances,
+    monthlyDistances
+  });
 });
 
 // Ruta para obtener la última ubicación
