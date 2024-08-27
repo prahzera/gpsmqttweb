@@ -3,33 +3,34 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-  }
+}
 
-  .header {
+.header {
     text-align: center;
     margin-bottom: 20px;
-  }
+}
 
-  .header img {
-    max-width: 150px; /* Ajusta el tamaño del logo según sea necesario */
+.header img {
+    max-width: 150px;
+    /* Ajusta el tamaño del logo según sea necesario */
     height: auto;
-  }
+}
 
-  #map {
+#map {
     height: 600px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+}
 
-  .controls-container {
+.controls-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 10px;
-  }
+}
 
-  .controls {
+.controls {
     display: flex;
     align-items: center;
     background-color: #fff;
@@ -37,59 +38,60 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 15px;
     width: 100%;
-  }
+}
 
-  .controls label {
+.controls label {
     font-weight: bold;
     margin-right: 10px;
-  }
+}
 
-  .controls select {
+.controls select {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
     font-size: 16px;
     font-family: Arial, sans-serif;
-  }
+}
 
-  .distance-summary {
+.distance-summary {
     display: flex;
     align-items: center;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px;
+    padding: 22px 15px;
     margin-left: 20px;
-  }
+    width: 50%;
+}
 
-  .distance-summary p {
+.distance-summary p {
     margin: 0;
     font-size: 18px;
     font-weight: bold;
     color: #333;
-  }
+}
 
-  .distance-resume {
+.distance-resume {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 15px;
     margin-top: 20px;
-  }
+}
 
-  .distance-resume p {
+.distance-resume p {
     margin: 0;
     font-size: 16px;
     color: #666;
-  }
+}
 
-  .distance-resume span {
+.distance-resume span {
     font-weight: bold;
-  }
+}
 
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
     #map {
-      height: 400px;
+        height: 400px;
     }
-  }
+}

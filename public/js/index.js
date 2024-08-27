@@ -76,7 +76,7 @@ fetch('/last-location')
     .then(response => response.json())
     .then(data => {
         if (data.lat && data.lon) {
-            map.setView([data.lat, data.lon], 16);
+            map.setView([data.lat, data.lon], 17);
             marker.setLatLng([data.lat, data.lon]);
         }
     });
