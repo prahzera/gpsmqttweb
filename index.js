@@ -27,9 +27,6 @@ const options = {
 // Conéctate al servidor MQTT
 const mqttClient = mqtt.connect('mqtt://broker.hivemq.com', options);
 
-// Conéctate al servidor MQTT debug
-//const mqttClient = mqtt.connect("mqtt://localhost", {});
-
 let coordinates = { lat: null, lon: null };
 
 // Ruta al archivo JSON donde se almacenarán las coordenadas
@@ -63,10 +60,14 @@ const filterCoordinatesByTime = (minutes) => {
   return coords.filter(coord => new Date(coord.timestamp) >= cutoffTime);
 };
 
+// Función para filtrar coordenadas por valor de 0
+const isValidCoordinate = (coord) => {
+  return coord.lat !== 0 && coord.lon !== 0;
+};
+
 // Conexión al servidor MQTT y manejo de mensajes
 mqttClient.on("connect", () => {
   console.log("Conectado al servidor MQTT");
-  // Suscripción a los tópicos lon y lat del perro1
   mqttClient.subscribe(["longps/perro1", "latgps/perro1"], (err) => {
     if (!err) {
       console.log("Suscrito a los temas longps/perro1 y latgps/perro1");
@@ -77,21 +78,14 @@ mqttClient.on("connect", () => {
 });
 
 mqttClient.on("message", (topic, message) => {
-  // Filtrar falsas coordenadas por falta de señal del GPS
   if (topic === "longps/perro1") {
-    const lon = parseFloat(message.toString());
-    if (lon !== 0) {
-      coordinates.lon = lon;
-    }
+    coordinates.lon = parseFloat(message.toString());
   } else if (topic === "latgps/perro1") {
-    const lat = parseFloat(message.toString());
-    if (lat !== 0) {
-      coordinates.lat = lat;
-    }
+    coordinates.lat = parseFloat(message.toString());
   }
 
-  // Enviar coordenadas al cliente solo si ambas están disponibles
-  if (coordinates.lat !== null && coordinates.lon !== null) {
+  // Enviar coordenadas al cliente solo si ambas están disponibles y no son 0
+  if (coordinates.lat !== null && coordinates.lon !== null && isValidCoordinate(coordinates)) {
     const newCoord = {
       lat: coordinates.lat,
       lon: coordinates.lon,
