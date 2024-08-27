@@ -66,6 +66,7 @@ const filterCoordinatesByTime = (minutes) => {
 // Conexión al servidor MQTT y manejo de mensajes
 mqttClient.on("connect", () => {
   console.log("Conectado al servidor MQTT");
+  // Suscripción a los tópicos lon y lat del perro1
   mqttClient.subscribe(["longps/perro1", "latgps/perro1"], (err) => {
     if (!err) {
       console.log("Suscrito a los temas longps/perro1 y latgps/perro1");
@@ -76,6 +77,7 @@ mqttClient.on("connect", () => {
 });
 
 mqttClient.on("message", (topic, message) => {
+  // Filtrar falsas coordenadas por falta de señal del GPS
   if (topic === "longps/perro1") {
     const lon = parseFloat(message.toString());
     if (lon !== 0) {

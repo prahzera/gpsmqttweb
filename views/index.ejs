@@ -6,6 +6,7 @@
   <style>
     #map { height: 600px; width: 100%; }
     .controls { margin: 10px; }
+    .distance-summary { margin: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -22,6 +23,15 @@
       <option value="1440">Último día</option>
     </select>
   </div>
+  
+  <!-- Resumen de la distancia recorrida -->
+  <div class="distance-summary">
+    <p>Distancia recorrida en el intervalo seleccionado: <span id="distance-current">0 km</span></p>
+    <p>Distancia recorrida hoy: <span id="distance-day">0 km</span></p>
+    <p>Distancia recorrida esta semana: <span id="distance-week">0 km</span></p>
+    <p>Distancia recorrida este mes: <span id="distance-month">0 km</span></p>
+  </div>
+
   <div id="map"></div>
   
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -41,22 +51,50 @@
 
     const marker = L.marker([0, 0], { icon: customIcon }).addTo(map);
     const socket = io();
-    let routeLayer = L.layerGroup().addTo(map); // Usar LayerGroup para mantener la ruta
-    let lastCoords = { lat: null, lon: null }; // Para almacenar la última coordenada completa
+    let routeLayer = L.layerGroup().addTo(map);
 
-    // Función para dibujar la ruta en el mapa
+    // Función para calcular la distancia entre dos puntos geográficos
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        0.5 - Math.cos(dLat) / 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        (1 - Math.cos(dLon)) / 2;
+      return R * 2 * Math.asin(Math.sqrt(a));
+    };
+
     const drawRoute = (coords) => {
       routeLayer.clearLayers(); // Limpia la capa antes de agregar nueva ruta
       const latlngs = coords.map(coord => [coord.lat, coord.lon]);
       L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(routeLayer);
     };
 
-    // Función para solicitar y mostrar el historial basado en el intervalo seleccionado
-    const updateRoute = (hours) => {
-      fetch(`/route/${hours}`)
-        .then(response => response.json())
-        .then(data => drawRoute(data));
+    // Función para actualizar el resumen de distancia recorrida
+    const updateDistanceSummary = (coords) => {
+      let totalDistance = 0;
+      for (let i = 1; i < coords.length; i++) {
+        totalDistance += calculateDistance(coords[i - 1].lat, coords[i - 1].lon, coords[i].lat, coords[i].lon);
+      }
+      document.getElementById('distance-current').textContent = `${totalDistance.toFixed(2)} km`;
     };
+
+    const updateRoute = (minutes) => {
+      fetch(`/route/${minutes}`)
+        .then(response => response.json())
+        .then(data => {
+          drawRoute(data);
+          updateDistanceSummary(data);
+        })
+        .catch(error => console.error('Error al obtener la ruta:', error));
+    };
+
+    // Maneja el cambio en la selección del intervalo de tiempo
+    document.getElementById('timeRange').addEventListener('change', (event) => {
+      const minutes = event.target.value;
+      updateRoute(minutes);
+    });
 
     // Obtiene la última ubicación al cargar la página
     fetch('/last-location')
@@ -68,25 +106,18 @@
         }
       });
 
-    // Solicita la ruta de las últimas X horas (por ejemplo, 24 horas) y dibuja
-    const initialHours = document.getElementById('timeRange').value;
-    updateRoute(initialHours);
+    // Inicializa el mapa y la distancia al cargar la página
+    const timeRange = document.getElementById('timeRange').value;
+    updateRoute(timeRange);
 
     // Escucha las nuevas coordenadas del servidor
     socket.on('coordinates', (coord) => {
-      // Actualiza la última coordenada completa
       marker.setLatLng([coord.lat, coord.lon]);
       map.setView([coord.lat, coord.lon]);
 
       // Actualizar el historial en el mapa con el intervalo actual
       const timeRange = document.getElementById('timeRange').value;
       updateRoute(timeRange);
-    });
-
-    // Maneja el cambio en la selección del intervalo de tiempo
-    document.getElementById('timeRange').addEventListener('change', (event) => {
-      const hours = event.target.value;
-      updateRoute(hours);
     });
   </script>
 </body>
