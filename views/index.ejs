@@ -2,56 +2,56 @@
 <html>
 
 <head>
-  <title>Mapa en Tiempo Real</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="/css/index.css">
+  <title>Dashboard</title> <!-- Título de la página -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> <!-- Enlace a la hoja de estilo de Leaflet -->
+  <link rel="stylesheet" href="/css/index.css"> <!-- Enlace a la hoja de estilo personalizada -->
 </head>
 
 <body>
-  <div class="header">
-    <img src="/images/logo.png" alt="Logo">
+  <div class="header"> <!-- Contenedor para el encabezado -->
+    <img src="/images/logo.png" alt="Logo"> <!-- Muestra el logo centrado en el encabezado -->
   </div>
 
-  <div class="controls-container">
-    <div class="controls">
-      <label for="timeRange">Ver historial de:</label>
-      <select id="timeRange">
-        <option value="1440">Últimas 24 horas</option>
-        <option value="720">Últimas 12 horas</option>
-        <option value="180">Últimas 3 horas</option>
-        <option value="60">Última hora</option>
-        <option value="30">Últimos 30 minutos</option>
-        <option value="15">Últimos 15 minutos</option>
-        <option value="10">Últimos 10 minutos</option>
-        <option value="5">Últimos 5 minutos</option>
+  <div class="controls-container"> <!-- Contenedor para los controles -->
+    <div class="controls"> <!-- Sección para los controles de selección -->
+      <label for="timeRange">Ver historial de:</label> <!-- Etiqueta para el selector de tiempo -->
+      <select id="timeRange"> <!-- Selector de intervalo de tiempo -->
+        <option value="1440">Últimas 24 horas</option> <!-- Opción para ver el historial de las últimas 24 horas -->
+        <option value="720">Últimas 12 horas</option> <!-- Opción para ver el historial de las últimas 12 horas -->
+        <option value="180">Últimas 3 horas</option> <!-- Opción para ver el historial de las últimas 3 horas -->
+        <option value="60">Última hora</option> <!-- Opción para ver el historial de la última hora -->
+        <option value="30">Últimos 30 minutos</option> <!-- Opción para ver el historial de los últimos 30 minutos -->
+        <option value="15">Últimos 15 minutos</option> <!-- Opción para ver el historial de los últimos 15 minutos -->
+        <option value="10">Últimos 10 minutos</option> <!-- Opción para ver el historial de los últimos 10 minutos -->
+        <option value="5">Últimos 5 minutos</option> <!-- Opción para ver el historial de los últimos 5 minutos -->
       </select>
     </div>
 
-    <div class="distance-summary">
+    <div class="distance-summary"> <!-- Sección para mostrar el resumen de la distancia recorrida -->
       <p>Distancia recorrida en el intervalo seleccionado: <span id="distance-current">
-          <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
+          <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km <!-- Muestra la distancia recorrida en el intervalo seleccionado, con un valor por defecto de 0 km si no hay datos -->
         </span></p>
     </div>
   </div>
 
-  <div id="map"></div>
+  <div id="map"></div> <!-- Contenedor para el mapa -->
 
-  <div class="distance-resume">
+  <div class="distance-resume"> <!-- Sección para mostrar el resumen de distancias -->
     <p>Distancia recorrida hoy: <span id="distance-day">
         <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new
-          Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
+          Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km <!-- Muestra la distancia recorrida hoy, basada en las distancias diarias -->
       </span></p>
     <p>Distancia recorrida esta semana: <span id="distance-week">
-        <%= Object.values(dailyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
+        <%= Object.values(dailyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km <!-- Suma las distancias diarias para mostrar la distancia recorrida en la semana -->
       </span></p>
     <p>Distancia recorrida este mes: <span id="distance-month">
-        <%= Object.values(monthlyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
+        <%= Object.values(monthlyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km <!-- Suma las distancias mensuales para mostrar la distancia recorrida en el mes -->
       </span></p>
   </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/index.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> <!-- Enlace al script de Leaflet para crear el mapa -->
+  <script src="/socket.io/socket.io.js"></script> <!-- Enlace al script de Socket.IO para la comunicación en tiempo real -->
+  <script src="/js/index.js"></script> <!-- Enlace al script personalizado para manejar la lógica del mapa -->
 </body>
 
 </html>

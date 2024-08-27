@@ -17,7 +17,7 @@ body {
 }
 
 #map {
-    height: 600px;
+    height: 60vh;
     width: 100%;
     border-radius: 8px;
 }
@@ -112,8 +112,8 @@ body {
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
     #map {
-        height: 400px;
+        height: 40vh;
     }
 }
