@@ -1,5 +1,8 @@
 {
     "Wanda": {
         "contraseña": "111"
+    },
+    "admin": {
+        "contraseña": "123"
     }
 }
