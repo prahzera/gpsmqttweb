@@ -11,7 +11,7 @@ const server = http.createServer(app); // Crea un servidor HTTP utilizando Expre
 const io = socketIo(server); // Asocia Socket.IO con el servidor HTTP
 
 app.use(session({
-  secret: 'tu_clave_secreta', // Cambia esto por una clave secreta adecuada
+  secret: 'ickki2p2',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Cambia a true si usas HTTPS
@@ -246,6 +246,21 @@ app.get('/logout', (req, res) => {
   });
 });
 
+
+const ACCESS_TOKEN = 'D2YW3PZVYDMB6M14ZM8IS7MXYEXO5DA8'
+
+app.get('/coordinates', async (req, res) => {
+  const token = req.query.token; // Obtiene el token de los parámetros de consulta
+
+  // Verifica si el token es válido
+  if (token === ACCESS_TOKEN) {
+    // Envía el archivo coordinates.json si el token es válido
+    res.sendFile(dataFilePath);
+  } else {
+    // Devuelve un error 403 si el token es inválido
+    res.status(403).json({ error: 'Token inválido' });
+  }
+});
 
 // Inicia el servidor y lo pone a escuchar en el puerto especificado
 server.listen(port, () => {
