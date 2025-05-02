@@ -2,9 +2,11 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const session = require('express-session');
+const socketIO = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+const io = socketIO(server);
 
 // Configura EJS como motor de plantillas
 app.set("view engine", "ejs");
@@ -27,6 +29,10 @@ app.use(session({
 // Importa y utiliza las rutas desde el archivo routes.js
 const routes = require('./routes/routes');
 app.use('/', routes);
+
+// Conectar el cliente MQTT con Socket.io
+const mqttHandler = require('./client/mqttClient');
+mqttHandler(io); // Pasa la instancia de io al cliente MQTT
 
 // Inicia el servidor y lo pone a escuchar en el puerto especificado
 const port = 3000;

@@ -6,19 +6,41 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.login-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  overflow: hidden;
+  animation: bgmove 12s linear infinite alternate;
+}
+@keyframes bgmove {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  100% { filter: hue-rotate(20deg) brightness(1.08); }
 }
 
 .container {
-  background: #ffffff;
-  /* Fondo blanco para el formulario */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* Sombra suave */
+  background: #ffffffcc;
+  padding: 32px 28px 24px 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(90, 113, 103, 0.13), 0 1.5px 6px rgba(90,113,103,0.08);
   width: 100%;
-  max-width: 400px;
-  /* Ancho máximo del formulario */
+  max-width: 370px;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: opacity 0.7s cubic-bezier(.4,1.4,.6,1), transform 0.7s cubic-bezier(.4,1.4,.6,1);
+}
+.animated-card.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .logo {
@@ -26,63 +48,98 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 img {
-  max-width: 20vh;
+  max-width: 18vh;
+  filter: drop-shadow(0 2px 8px #b3c6d6);
+  transition: transform 0.3s;
+}
+img:hover {
+  transform: scale(1.07) rotate(-2deg);
 }
 
 h1 {
   margin-top: 0;
-  color: #333;
+  color: #3a4a3f;
   text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
 }
 
 form {
   display: flex;
   flex-direction: column;
+  gap: 0.5em;
 }
 
 label {
   margin: 10px 0 5px;
-  font-weight: bold;
-  color: #555;
+  font-weight: 500;
+  color: #5a7167;
+  letter-spacing: 0.2px;
 }
 
 input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 15px;
+  padding: 11px 12px;
+  border: 1px solid #bfc9c2;
+  border-radius: 5px;
+  margin-bottom: 10px;
   font-size: 16px;
+  background: #f7faf9;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
-button {
-  background: #5a7167;
-  /* Color del botón */
+input:focus {
+  border: 1.5px solid #5a7167;
+  outline: none;
+  box-shadow: 0 0 0 2px #b3c6d6;
+}
+
+.login-btn, button {
+  background: linear-gradient(90deg, #5a7167 60%, #7fa6a1 100%);
   color: #ffffff;
-  /* Color del texto del botón */
   border: none;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 12px 0;
+  border-radius: 5px;
+  font-size: 17px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(90,113,103,0.08);
+  transition: background 0.3s, transform 0.2s;
+  letter-spacing: 0.5px;
 }
 
-button:hover {
-  background: #4a5d4e;
-  /* Color del botón en hover */
+.login-btn:hover, button:hover {
+  background: linear-gradient(90deg, #4a5d4e 60%, #5a7167 100%);
+  transform: translateY(-2px) scale(1.03);
 }
 
 .error-message {
   color: #e74c3c;
-  /* Color rojo para mensajes de error */
   text-align: center;
+  margin-top: 10px;
 }
 
 .success-message {
   color: #2ecc71;
-  /* Color verde para mensajes de éxito */
   text-align: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 18px 6vw 18px 6vw;
+    max-width: 98vw;
+  }
+  img {
+    max-width: 14vh;
+  }
+  h1 {
+    font-size: 1.3rem;
+  }
 }

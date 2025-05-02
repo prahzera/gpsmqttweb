@@ -3,7 +3,10 @@
 
 <head>
   <title>Dashboard de Seguimiento GPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#5a7167">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="/css/index.css">
 </head>
 
@@ -15,18 +18,29 @@
     <img src="/images/logo.png" alt="Logo" class="logo">
     <h1 class="dashboard-title">Dashboard de Seguimiento GPS</h1>
     <nav class="header-actions">
+      <button id="mobile-controls-toggle" class="mobile-menu-toggle">
+        <span class="material-icons">tune</span>
+      </button>
+      <button id="show-stats" class="stats-button" title="Estadísticas">
+        <span class="material-icons">bar_chart</span>
+      </button>
       <a href="/logout" class="logout-button">Cerrar sesión</a>
       <button id="dark-mode-toggle" class="dark-mode-toggle" title="Modo oscuro">🌙</button>
     </nav>
   </header>
 
   <main class="main-content">
-    <section class="controls-section">
-      <h2 class="section-title">Controles de visualización</h2>
+    <section class="controls-section" id="controls-panel">
+      <div class="controls-header mobile-only">
+        <h3>Controles</h3>
+        <button class="close-controls">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
       <div class="controls-group">
         <div class="controls">
           <label for="timeRange">Historial rápido:</label>
-          <select id="timeRange">
+          <select id="timeRange" class="touch-friendly">
             <option value="1440">Últimas 24 horas</option>
             <option value="720">Últimas 12 horas</option>
             <option value="180">Últimas 3 horas</option>
@@ -42,19 +56,26 @@
           <div class="date-inputs">
             <div class="date-field">
               <label for="startDate">Desde:</label>
-              <input type="date" id="startDate" max="<%= new Date().toISOString().split('T')[0] %>">
+              <input type="date" id="startDate" class="touch-friendly" max="<%= new Date().toISOString().split('T')[0] %>">
             </div>
             <div class="date-field">
               <label for="endDate">Hasta:</label>
-              <input type="date" id="endDate" max="<%= new Date().toISOString().split('T')[0] %>">
+              <input type="date" id="endDate" class="touch-friendly" max="<%= new Date().toISOString().split('T')[0] %>">
             </div>
           </div>
-          <button id="applyDateRange" class="apply-btn">Aplicar</button>
+          <button id="applyDateRange" class="apply-btn touch-friendly">Aplicar</button>
         </div>
-        <div class="distance-summary-minimal">
-          <span id="distance-current" title="Distancia recorrida en el intervalo seleccionado">
-            <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
-          </span>
+        <div class="metrics-summary">
+          <div class="distance-summary-minimal" title="Distancia recorrida en el intervalo seleccionado">
+            <span class="metric-icon">📏</span>
+            <span id="distance-current">
+              <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
+            </span>
+          </div>
+          <div class="distance-summary-minimal speed-summary" title="Velocidad promedio en el intervalo seleccionado">
+            <span class="metric-icon">⚡</span>
+            <span id="speed-average">0 km/h</span>
+          </div>
         </div>
         <div class="distance-resume-mini">
           <span title="Hoy">H: <span id="distance-day-mini">
@@ -97,11 +118,92 @@
     </section>
   </main>
 
+  <!-- Modal de estadísticas -->
+  <div id="stats-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Estadísticas de velocidad</h3>
+        <button class="close-modal">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="speed-histogram" class="histogram"></div>
+        <div class="stats-details">
+          <div class="stat-item">
+            <span class="stat-label">Velocidad máxima:</span>
+            <span id="max-speed" class="stat-value">0 km/h</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Velocidad mínima:</span>
+            <span id="min-speed" class="stat-value">0 km/h</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Tiempo en movimiento:</span>
+            <span id="moving-time" class="stat-value">0 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/script.js"></script>
   <script src="/js/night.js"></script>
   <script src="/js/loader.js"></script>
+  <script src="/js/stats.js"></script>
+  <script>
+    // Script para manejar el menú desplegable en móviles
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileToggle = document.getElementById('mobile-controls-toggle');
+      const controlsPanel = document.getElementById('controls-panel');
+      const closeButton = document.querySelector('.close-controls');
+      
+      // Función para verificar si estamos en móvil
+      const isMobile = () => window.innerWidth <= 768;
+      
+      // Inicialización
+      if (isMobile()) {
+        controlsPanel.classList.add('collapsed');
+      }
+      
+      // Toggle del panel de controles
+      mobileToggle.addEventListener('click', function() {
+        if (isMobile()) {
+          controlsPanel.classList.toggle('collapsed');
+          controlsPanel.classList.toggle('expanded');
+          document.body.classList.toggle('controls-open');
+        }
+      });
+      
+      // Cerrar el panel
+      closeButton.addEventListener('click', function() {
+        if (isMobile()) {
+          controlsPanel.classList.remove('expanded');
+          controlsPanel.classList.add('collapsed');
+          document.body.classList.remove('controls-open');
+        }
+      });
+      
+      // Cerrar el panel cuando se redimensiona a desktop
+      window.addEventListener('resize', function() {
+        if (!isMobile()) {
+          controlsPanel.classList.remove('collapsed', 'expanded');
+          document.body.classList.remove('controls-open');
+        } else if (!controlsPanel.classList.contains('expanded')) {
+          controlsPanel.classList.add('collapsed');
+        }
+      });
+      
+      // Cerrar el panel cuando se hace clic en el botón Aplicar
+      document.getElementById('applyDateRange').addEventListener('click', function() {
+        if (isMobile()) {
+          controlsPanel.classList.remove('expanded');
+          controlsPanel.classList.add('collapsed');
+          document.body.classList.remove('controls-open');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
