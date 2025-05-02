@@ -1,158 +1,282 @@
+/* --- ESTRUCTURA GENERAL Y TIPOGRAFÍA --- */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background: linear-gradient(135deg, #f4f7fa 0%, #e9ecef 100%);
+    color: #222;
 }
 
-/* Estilos para el contenedor del encabezado */
-.header {
-    position: relative;
+.loader {
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    /* Centra el logo horizontalmente */
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-/* Estilos para el logo */
-.header img {
-    height: 15vh;
-    /* Ajusta la altura del logo a 15% de la altura de la ventana */
-    max-width: 100%;
-    /* Asegura que el logo no se desborde */
-    object-fit: contain;
-    /* Mantiene la proporción del logo */
-}
-
-/* Estilos para el botón de cierre de sesión */
-.logout-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #f44336;
-    /* Color de fondo del botón */
-    color: white;
-    /* Color del texto */
-    padding: 10px 20px;
-    /* Espaciado interno del botón */
-    border: none;
-    /* Sin borde */
-    border-radius: 5px;
-    /* Bordes redondeados */
-    text-decoration: none;
-    /* Sin subrayado */
-    font-weight: bold;
-    /* Texto en negrita */
-}
-
-.logout-button:hover {
-    background-color: #c62828;
-    /* Color de fondo al pasar el mouse */
-}
-
-
-/* Contenedor del mapa */
-.map-container {
-    display: flex;
-    /* Usa flexbox para centrar el contenido */
-    justify-content: center;
-    /* Centra horizontalmente el contenido */
     align-items: center;
-    /* Centra verticalmente el contenido */
-    padding: 5px;
-    /* Espacio alrededor del mapa */
-    box-sizing: border-box;
-    /* Incluye el padding en el tamaño total */
-    width: calc(100% - 10px);
-    /* Ancho del contenedor ajustado para compensar el padding */
-    height: 60vh;
-    /* Altura del contenedor */
-    margin: 0 auto;
-    /* Asegura que el contenedor se centre horizontalmente */
+    z-index: 9999;
+    backdrop-filter: blur(8px);
 }
 
-/* Estilo para el mapa */
-#map {
-    height: calc(100% - 10px);
-    /* Altura ajustada para compensar el padding */
-    width: 100%;
-    /* Ancho total del contenedor */
-    border-radius: 8px;
-    /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.loader img {
+    width: 100px;
+    height: auto;
+    animation: breathe 2s ease-in-out infinite;
 }
 
+@keyframes breathe {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
 
-.controls-container {
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 10px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(90, 113, 103, 0.08);
+    padding: 18px 40px 18px 24px;
+    border-bottom: 2px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.logo {
+    height: 48px;
+    margin-right: 18px;
+}
+.dashboard-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #3a4a3f;
+    margin: 0 0 0 10px;
+    flex: 1;
+}
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.logout-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+.logout-button:hover {
+    background-color: #c62828;
+}
+.dark-mode-toggle {
+    background-color: #e0e0e0;
+    color: #000;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.2s;
+}
+.dark-mode-toggle:hover {
+    background-color: #bdbdbd;
 }
 
+.main-content {
+    max-width: 1200px;
+    margin: 30px auto 0 auto;
+    padding: 0 20px 40px 20px;
+}
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #5a7167;
+    margin-bottom: 18px;
+    margin-top: 0;
+    letter-spacing: 0.5px;
+}
+
+/* --- CONTROLES --- */
+.controls-section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(90, 113, 103, 0.08);
+    padding: 28px 28px 18px 28px;
+    margin-bottom: 32px;
+}
+.controls-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: flex-end;
+    margin-bottom: 18px;
+}
 .controls {
     display: flex;
     align-items: center;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    width: 100%;
+    gap: 12px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
 }
-
 .controls label {
-    font-weight: bold;
-    margin-right: 10px;
+    font-weight: 500;
+    margin: 0 8px 0 0;
 }
-
 .controls select {
-    padding: 8px;
-    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border: 1px solid #bfc9c2;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #f7faf9;
     font-size: 16px;
-    font-family: Arial, sans-serif;
+    font-family: inherit;
 }
-
+.date-range-controls {
+    display: flex;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    width: auto;
+    margin-top: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.date-range-controls > label {
+    font-weight: 500;
+    margin: 0 10px 0 0;
+    width: auto;
+}
+.date-inputs {
+    display: flex;
+    gap: 10px;
+}
+.date-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.date-field label {
+    font-weight: 400;
+    margin-right: 2px;
+}
+.date-field input[type="date"] {
+    padding: 7px 10px;
+    border: 1px solid #bfc9c2;
+    border-radius: 4px;
+    background-color: #f7faf9;
+    font-size: 15px;
+    font-family: inherit;
+    width: 140px;
+}
+.apply-btn {
+    padding: 8px 18px;
+    background-color: #5a7167;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.apply-btn:hover {
+    background-color: #3a4a3f;
+}
 .distance-summary {
     display: flex;
     align-items: center;
-    background-color: #fff;
+    background-color: #f7faf9;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 22px 15px;
-    margin-left: 20px;
-    width: 50%;
-}
-
-.distance-summary p {
-    margin: 0;
+    box-shadow: 0 1px 3px rgba(90, 113, 103, 0.07);
+    padding: 18px 15px;
+    margin-top: 10px;
+    width: 100%;
     font-size: 18px;
+    font-weight: 500;
+    color: #3a4a3f;
+}
+.distance-summary span {
     font-weight: bold;
-    color: #333;
+    color: #2d3a32;
 }
 
-.distance-resume {
-    background-color: #fff;
+/* --- MAPA --- */
+.map-section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(90, 113, 103, 0.08);
+    padding: 28px 28px 18px 28px;
+    margin-bottom: 32px;
+}
+.map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 60vh;
+    margin: 0 auto;
+}
+#map {
+    height: 100%;
+    width: 100%;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(90, 113, 103, 0.10);
+    border: 1px solid #e0e0e0;
 }
 
-.distance-resume p {
+/* --- RESUMEN DE DISTANCIAS --- */
+.summary-section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(90, 113, 103, 0.08);
+    padding: 28px 28px 18px 28px;
+    margin-bottom: 32px;
+}
+.distance-resume {
+    display: flex;
+    gap: 32px;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
     margin: 0;
-    font-size: 16px;
-    color: #666;
 }
-
-.distance-resume span {
+.distance-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #f7faf9;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(90, 113, 103, 0.07);
+    padding: 18px 24px;
+    min-width: 180px;
+    font-size: 17px;
+}
+.distance-label {
+    font-weight: 500;
+    color: #5a7167;
+    margin-bottom: 6px;
+}
+.distance-value {
     font-weight: bold;
+    color: #2d3a32;
+    font-size: 1.2em;
 }
 
-/* Añade esto a tu archivo CSS */
+/* --- BOTÓN GPS MAPA --- */
 .leaflet-control-custom {
     background-color: #5c7067b3;
     border: 2px solid #5a7167;
@@ -168,85 +292,92 @@ body {
     right: 10px;
     z-index: 1000;
 }
-
 .leaflet-control-custom img {
     width: 30px;
     height: 30px;
 }
 
-
-@media (max-width: 850px) {
-    #map {
-        height: 40vh;
-    }
-}
-
-
-
-
-.dark-mode-toggle {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #e0e0e0;
-    /* Color de fondo del botón en modo claro */
-    color: #000;
-    /* Color del texto en modo claro */
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    z-index: 1000;
-}
-
-
-/* Estilos para el modo oscuro */
+/* --- MODO OSCURO --- */
 .dark-mode {
-    background-color: #121212;
+    background-color: #181c1b;
     color: #e0e0e0;
 }
-
-.dark-mode p {
+.dark-mode .header {
+    background-color: #232826;
+    border-bottom: 2px solid #222;
+}
+.dark-mode .dashboard-title {
+    color: #e0e0e0;
+}
+.dark-mode .main-content,
+.dark-mode .controls-section,
+.dark-mode .map-section,
+.dark-mode .summary-section {
+    background: #232826;
+    color: #e0e0e0;
+    box-shadow: 0 2px 8px rgba(90, 113, 103, 0.18);
+}
+.dark-mode .distance-summary,
+.dark-mode .distance-item {
+    background: #232826;
+    color: #e0e0e0;
+    box-shadow: 0 1px 3px rgba(90, 113, 103, 0.18);
+}
+.dark-mode .distance-label {
     color: #b1b1b1;
 }
-
-.dark-mode .distance-summary p,
-.dark-mode .distance-summary span {
+.dark-mode .distance-value {
     color: #e0e0e0;
 }
-
-.dark-mode .header {
-    background-color: #1e1e1e;
-}
-
-.dark-mode .header img {
-    filter: none;
-    /* No invertir el color del logo */
-}
-
-.dark-mode .controls,
-.dark-mode .distance-summary,
-.dark-mode .distance-resume {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-}
-
-.dark-mode .controls select {
+.dark-mode .controls select,
+.dark-mode .date-range-controls input,
+.dark-mode .date-field input[type="date"] {
     background-color: #333;
     color: #e0e0e0;
     border: 1px solid #555;
 }
-
+.dark-mode .apply-btn {
+    background-color: #333;
+    color: #e0e0e0;
+}
+.dark-mode .apply-btn:hover {
+    background-color: #555;
+}
 .dark-mode #map {
     border: 1px solid #333;
 }
-
+.dark-mode .logout-button {
+    background-color: #b71c1c;
+}
+.dark-mode .logout-button:hover {
+    background-color: #f44336;
+}
 .dark-mode .dark-mode-toggle {
     background-color: #333;
     color: #e0e0e0;
 }
-
 .dark-mode .dark-mode-toggle:hover {
     background-color: #555;
+}
+
+@media (max-width: 850px) {
+    .main-content {
+        padding: 0 5px 40px 5px;
+    }
+    .map-container {
+        height: 40vh;
+    }
+    .distance-resume {
+        flex-direction: column;
+        gap: 18px;
+    }
+    .distance-item {
+        min-width: 120px;
+        width: 100%;
+        align-items: stretch;
+    }
+    .controls-group {
+        flex-direction: column;
+        gap: 18px;
+    }
 }

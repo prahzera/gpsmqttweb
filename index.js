@@ -1,13 +1,10 @@
 const express = require("express");
 const path = require("path");
 const http = require("http");
-const socketIo = require("socket.io");
 const session = require('express-session');
-const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
 
 // Configura EJS como motor de plantillas
 app.set("view engine", "ejs");
@@ -36,7 +33,3 @@ const port = 3000;
 server.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
-
-// Manejo de la conexión MQTT y mensajes (importado desde mqttClient.js)
-require('./client/mqttClient')(io);
-

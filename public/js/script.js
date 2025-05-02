@@ -14,6 +14,36 @@ const marker = L.marker([0, 0], { icon: customIcon }).addTo(map); // Crea un mar
 const socket = io(); // Inicializa la conexión al servidor usando Socket.IO
 let routeLayer = L.layerGroup().addTo(map); // Crea un grupo de capas para la ruta y lo agrega al mapa
 
+// Inicializar los input de fecha
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+
+// Configuración inicial de fechas
+const today = new Date().toISOString().split('T')[0];
+startDateInput.setAttribute('max', today);
+endDateInput.setAttribute('max', today);
+
+// Prevenir selección de fechas inválidas
+startDateInput.addEventListener('change', () => {
+    // La fecha final no puede ser anterior a la fecha inicial
+    endDateInput.setAttribute('min', startDateInput.value);
+    
+    // Si la fecha final es anterior a la inicial, actualizar la fecha final
+    if (endDateInput.value && endDateInput.value < startDateInput.value) {
+        endDateInput.value = startDateInput.value;
+    }
+});
+
+endDateInput.addEventListener('change', () => {
+    // La fecha inicial no puede ser posterior a la fecha final
+    startDateInput.setAttribute('max', endDateInput.value || today);
+    
+    // Si la fecha inicial es posterior a la final, actualizar la fecha inicial
+    if (startDateInput.value && startDateInput.value > endDateInput.value) {
+        startDateInput.value = endDateInput.value;
+    }
+});
+
 // Función para calcular la distancia entre dos puntos geográficos
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radio de la Tierra en km
@@ -28,6 +58,12 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 const drawRoute = (coords) => { 
     routeLayer.clearLayers(); // Limpia la capa antes de agregar la nueva ruta
+    
+    if (coords.length === 0) {
+        document.getElementById('distance-current').textContent = '0 km';
+        return;
+    }
+    
     const latlngs = coords.map(coord => [coord.lat, coord.lon]); // Convierte las coordenadas en un array de pares latitud-longitud
 
     // Dibuja la línea de la ruta
@@ -44,6 +80,11 @@ const drawRoute = (coords) => {
             .bindPopup(`Hora: ${new Date(coord.timestamp).toLocaleTimeString()}`) // Agrega un popup que muestra la hora en cada círculo
             .addTo(routeLayer); // Agrega el círculo a la capa de la ruta
     });
+    
+    // Ajusta la vista del mapa para mostrar toda la ruta
+    if (coords.length > 0) {
+        map.fitBounds(latlngs);
+    }
 };
 
 // Función para actualizar el resumen de distancia recorrida
@@ -65,10 +106,33 @@ const updateRoute = (minutes) => {
         .catch(error => console.error('Error al obtener la ruta:', error)); // Muestra un error en caso de que la solicitud falle
 };
 
+// Nueva función para actualizar la ruta por rango de fechas
+const updateRouteByDateRange = (startDate, endDate) => {
+    fetch(`/route-by-dates?startDate=${startDate}&endDate=${endDate}`)
+        .then(response => response.json())
+        .then(data => {
+            drawRoute(data);
+            updateDistanceSummary(data);
+        })
+        .catch(error => console.error('Error al obtener la ruta por fechas:', error));
+};
+
 // Maneja el cambio en la selección del intervalo de tiempo
 document.getElementById('timeRange').addEventListener('change', (event) => { 
     const minutes = event.target.value; // Obtiene el valor seleccionado en el rango de tiempo
     updateRoute(minutes); // Actualiza la ruta y el resumen en base al nuevo intervalo de tiempo
+});
+
+// Manejar el botón para aplicar el rango de fechas
+document.getElementById('applyDateRange').addEventListener('click', () => {
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    
+    if (startDate && endDate) {
+        updateRouteByDateRange(startDate, endDate);
+    } else {
+        alert('Por favor, seleccione fechas de inicio y fin');
+    }
 });
 
 // Obtiene la última ubicación al cargar la página

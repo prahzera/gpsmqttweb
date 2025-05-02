@@ -26,7 +26,7 @@ client.on('connect', () => {
     client.publish('longps/perro1', lon.toString(), () => {
       console.log('Publicado longitud:', lon);
     });
-  }, 120000); // Cada 120 segundos
+  }, 3000); // Cada 120 segundos
 });
 
 client.on('error', (err) => {

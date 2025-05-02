@@ -9,7 +9,7 @@ const options = {
 };
 
 // Conéctate al servidor MQTT
-const mqttClient = mqtt.connect('mqtt://broker.hivemq.com', options);
+const mqttClient = mqtt.connect('mqtt://broker.hivemq.com', options); // mqtt://broker.hivemq.com
 
 // Define la ruta al archivo JSON donde se almacenan las coordenadas
 const dataFilePath = path.join(__dirname, "../coordinates.json");
@@ -44,23 +44,44 @@ const readCoordinates = () => {
 // Evento cuando el cliente MQTT se conecta al servidor
 mqttClient.on('connect', () => {
   console.log('Conectado al servidor MQTT');
-  mqttClient.subscribe('mi-topico'); // Suscribirse a un tema específico
+
+  // Suscribirse a los dos tópicos
+  mqttClient.subscribe('latgps/perro1');
+  mqttClient.subscribe('longps/perro1');
 });
 
-// Evento cuando se recibe un mensaje en el tema suscrito
+// Evento cuando se recibe un mensaje en alguno de los tópicos suscritos
 mqttClient.on('message', (topic, message) => {
   try {
-    const payload = JSON.parse(message.toString());
+    const payload = parseFloat(message.toString()); // Convertir el mensaje a número
+    
+    // Añadir console.log para mostrar el mensaje recibido
+    console.log(`[${new Date().toISOString()}] Mensaje MQTT recibido - Tópico: ${topic}, Valor: ${payload}`);
 
-    if (isValidCoordinate(payload)) {
-      const newCoord = {
-        lat: payload.lat,
-        lon: payload.lon,
-        timestamp: new Date().toISOString()
-      };
+    if (topic === 'latgps/perro1') {
+      coordinates.lat = payload;
+    } else if (topic === 'longps/perro1') {
+      coordinates.lon = payload;
+    }
 
-      writeCoordinates(newCoord); // Escribir las nuevas coordenadas en el archivo JSON
-      coordinates = newCoord; // Actualizar la variable con la nueva coordenada
+    // Si ambas coordenadas están disponibles, validar y escribir en el archivo
+    if (coordinates.lat !== null && coordinates.lon !== null) {
+      if (isValidCoordinate(coordinates)) {
+        const newCoord = {
+          lat: coordinates.lat,
+          lon: coordinates.lon,
+          timestamp: new Date().toISOString()
+        };
+
+        // Mostrar las coordenadas completas que serán guardadas
+        console.log(`[${new Date().toISOString()}] Nuevas coordenadas guardadas: Lat=${newCoord.lat}, Lon=${newCoord.lon}`);
+
+        writeCoordinates(newCoord); // Escribir las nuevas coordenadas en el archivo JSON
+        coordinates = { lat: null, lon: null }; // Reiniciar las coordenadas para la próxima vez
+      } else {
+        console.log(`[${new Date().toISOString()}] Coordenadas inválidas descartadas: Lat=${coordinates.lat}, Lon=${coordinates.lon}`);
+        coordinates = { lat: null, lon: null }; // Reiniciar las coordenadas
+      }
     }
   } catch (error) {
     console.error("Error al procesar el mensaje MQTT:", error);

@@ -2,69 +2,120 @@
 <html>
 
 <head>
-  <title>Dashboard</title> <!-- Título de la página -->
+  <title>Dashboard de Seguimiento GPS</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <!-- Enlace a la hoja de estilo de Leaflet -->
-  <link rel="stylesheet" href="/css/index.css"> <!-- Enlace a la hoja de estilo personalizada -->
+  <link rel="stylesheet" href="/css/index.css">
 </head>
 
 <body>
-  <div class="header">
-    <img src="/images/logo.png" alt="Logo">
-    <a href="/logout" class="logout-button">Cerrar sesión</a> <!-- Botón de cierre de sesión -->
-    <button id="dark-mode-toggle" class="dark-mode-toggle">🌙</button> <!-- Botón para alternar el modo oscuro -->
+  <div class="loader">
+    <img src="/images/logo.png" alt="Loading...">
   </div>
+  <header class="header">
+    <img src="/images/logo.png" alt="Logo" class="logo">
+    <h1 class="dashboard-title">Dashboard de Seguimiento GPS</h1>
+    <nav class="header-actions">
+      <a href="/logout" class="logout-button">Cerrar sesión</a>
+      <button id="dark-mode-toggle" class="dark-mode-toggle" title="Modo oscuro">🌙</button>
+    </nav>
+  </header>
 
-  <div class="controls-container"> <!-- Contenedor para los controles -->
-    <div class="controls"> <!-- Sección para los controles de selección -->
-      <label for="timeRange">Ver historial de:</label> <!-- Etiqueta para el selector de tiempo -->
-      <select id="timeRange"> <!-- Selector de intervalo de tiempo -->
-        <option value="1440">Últimas 24 horas</option> <!-- Opción para ver el historial de las últimas 24 horas -->
-        <option value="720">Últimas 12 horas</option> <!-- Opción para ver el historial de las últimas 12 horas -->
-        <option value="180">Últimas 3 horas</option> <!-- Opción para ver el historial de las últimas 3 horas -->
-        <option value="60">Última hora</option> <!-- Opción para ver el historial de la última hora -->
-        <option value="30">Últimos 30 minutos</option> <!-- Opción para ver el historial de los últimos 30 minutos -->
-        <option value="15">Últimos 15 minutos</option> <!-- Opción para ver el historial de los últimos 15 minutos -->
-        <option value="10">Últimos 10 minutos</option> <!-- Opción para ver el historial de los últimos 10 minutos -->
-        <option value="5">Últimos 5 minutos</option> <!-- Opción para ver el historial de los últimos 5 minutos -->
-      </select>
-    </div>
-
-    <div class="distance-summary"> <!-- Sección para mostrar el resumen de la distancia recorrida -->
-      <p>Distancia recorrida en el intervalo seleccionado: <span id="distance-current">
+  <main class="main-content">
+    <section class="controls-section">
+      <h2 class="section-title">Controles de visualización</h2>
+      <div class="controls-group">
+        <div class="controls">
+          <label for="timeRange">Historial rápido:</label>
+          <select id="timeRange">
+            <option value="1440">Últimas 24 horas</option>
+            <option value="720">Últimas 12 horas</option>
+            <option value="180">Últimas 3 horas</option>
+            <option value="60">Última hora</option>
+            <option value="30">Últimos 30 minutos</option>
+            <option value="15">Últimos 15 minutos</option>
+            <option value="10">Últimos 10 minutos</option>
+            <option value="5">Últimos 5 minutos</option>
+          </select>
+        </div>
+        <div class="date-range-controls">
+          <label>Rango personalizado:</label>
+          <div class="date-inputs">
+            <div class="date-field">
+              <label for="startDate">Desde:</label>
+              <input type="date" id="startDate" max="<%= new Date().toISOString().split('T')[0] %>">
+            </div>
+            <div class="date-field">
+              <label for="endDate">Hasta:</label>
+              <input type="date" id="endDate" max="<%= new Date().toISOString().split('T')[0] %>">
+            </div>
+          </div>
+          <button id="applyDateRange" class="apply-btn">Aplicar</button>
+        </div>
+      </div>
+      <div class="distance-summary">
+        <p>Distancia en el intervalo seleccionado: <span id="distance-current">
           <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
-            <!-- Muestra la distancia recorrida en el intervalo seleccionado, con un valor por defecto de 0 km si no hay datos -->
         </span></p>
-    </div>
-  </div>
+      </div>
+    </section>
 
-  <div class="map-container">
-    <div id="map"></div> <!-- Contenedor para el mapa -->
-  </div>
+    <section class="map-section">
+      <h2 class="section-title">Mapa de Recorrido</h2>
+      <div class="map-container">
+        <div id="map"></div>
+      </div>
+    </section>
 
-
-  <div class="distance-resume"> <!-- Sección para mostrar el resumen de distancias -->
-    <p>Distancia recorrida hoy: <span id="distance-day">
-        <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new
-          Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
-          <!-- Muestra la distancia recorrida hoy, basada en las distancias diarias -->
-      </span></p>
-    <p>Distancia recorrida esta semana: <span id="distance-week">
-        <%= Object.values(dailyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
-          <!-- Suma las distancias diarias para mostrar la distancia recorrida en la semana -->
-      </span></p>
-    <p>Distancia recorrida este mes: <span id="distance-month">
-        <%= Object.values(monthlyDistances).reduce((a, b)=> a + b, 0).toFixed(2) %> km
-          <!-- Suma las distancias mensuales para mostrar la distancia recorrida en el mes -->
-      </span></p>
-  </div>
+    <section class="summary-section">
+      <h2 class="section-title">Resumen de distancias</h2>
+      <div class="distance-resume">
+        <div class="distance-item">
+          <span class="distance-label">Hoy:</span>
+          <span id="distance-day" class="distance-value">
+            <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new
+              Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
+          </span>
+        </div>
+        <div class="distance-item">
+          <span class="distance-label">Esta semana:</span>
+          <span id="distance-week" class="distance-value">
+            <% 
+              const now = new Date();
+              const day = now.getDay() || 7;
+              const date = now.getDate();
+              const startDate = new Date(now);
+              startDate.setDate(date - day + 1);
+              const endDate = new Date(startDate);
+              endDate.setDate(startDate.getDate() + 6);
+              let weekDistance = 0;
+              for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                const dayKey = d.toISOString().split('T')[0];
+                if (dailyDistances[dayKey]) {
+                  weekDistance += dailyDistances[dayKey];
+                }
+              }
+            %>
+            <%= weekDistance.toFixed(2) %> km
+          </span>
+        </div>
+        <div class="distance-item">
+          <span class="distance-label">Este mes:</span>
+          <span id="distance-month" class="distance-value">
+            <% 
+              const currentMonth = now.getFullYear() + '-' + (now.getMonth() + 1);
+            %>
+            <%= monthlyDistances[currentMonth] ? monthlyDistances[currentMonth].toFixed(2) : '0' %> km
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- Enlace al script de Leaflet para crear el mapa -->
   <script src="/socket.io/socket.io.js"></script>
-  <!-- Enlace al script de Socket.IO para la comunicación en tiempo real -->
-  <script src="/js/script.js"></script> <!-- Enlace al script personalizado para manejar la lógica del mapa -->
-  <script src="/js/night.js"></script> <!-- Enlace al script para manejar el modo oscuro -->
+  <script src="/js/script.js"></script>
+  <script src="/js/night.js"></script>
+  <script src="/js/loader.js"></script>
 </body>
 
 </html>

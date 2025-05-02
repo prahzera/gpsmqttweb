@@ -76,6 +76,19 @@ router.get('/route/:minutes', (req, res) => {
   res.json(filteredCoords);
 });
 
+// Nueva ruta para obtener coordenadas por rango de fechas
+router.get('/route-by-dates', (req, res) => {
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
+  
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Se requieren fechas de inicio y fin' });
+  }
+  
+  const filteredCoords = filterCoordinatesByDateRange(startDate, endDate);
+  res.json(filteredCoords);
+});
+
 const ACCESS_TOKEN = 'D2YW3PZVYDMB6M14ZM8IS7MXYEXO5DA8';
 
 router.get('/coordinates', (req, res) => {
@@ -112,6 +125,22 @@ const filterCoordinatesByTime = (minutes) => {
   return coords.filter(coord => new Date(coord.timestamp) >= cutoffTime);
 };
 
+// Nueva función para filtrar coordenadas por rango de fechas
+const filterCoordinatesByDateRange = (startDateStr, endDateStr) => {
+  const coords = readCoordinates();
+  
+  // Convertir string de fechas a objetos Date
+  // Añadimos la hora a la fecha de fin para incluir todo el día
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+  endDate.setHours(23, 59, 59, 999); // Final del día
+  
+  return coords.filter(coord => {
+    const coordDate = new Date(coord.timestamp);
+    return coordDate >= startDate && coordDate <= endDate;
+  });
+};
+
 // Función para calcular la distancia entre dos coordenadas usando la fórmula de Haversine
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Radio de la Tierra en km
@@ -130,6 +159,14 @@ const calculateDistances = (coords) => {
   let totalDistance = 0;
   let dailyDistances = {};
   let monthlyDistances = {};
+
+  // Asegurar que hay valores para el día, semana y mes actuales
+  const today = new Date().toISOString().split('T')[0];
+  const currentMonth = new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
+  
+  // Inicializar con cero para día y mes actuales
+  dailyDistances[today] = 0;
+  monthlyDistances[currentMonth] = 0;
 
   coords.forEach((coord, index) => {
     if (index > 0) {
