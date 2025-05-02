@@ -51,34 +51,16 @@
           </div>
           <button id="applyDateRange" class="apply-btn">Aplicar</button>
         </div>
-      </div>
-      <div class="distance-summary">
-        <p>Distancia en el intervalo seleccionado: <span id="distance-current">
-          <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
-        </span></p>
-      </div>
-    </section>
-
-    <section class="map-section">
-      <h2 class="section-title">Mapa de Recorrido</h2>
-      <div class="map-container">
-        <div id="map"></div>
-      </div>
-    </section>
-
-    <section class="summary-section">
-      <h2 class="section-title">Resumen de distancias</h2>
-      <div class="distance-resume">
-        <div class="distance-item">
-          <span class="distance-label">Hoy:</span>
-          <span id="distance-day" class="distance-value">
-            <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new
-              Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
+        <div class="distance-summary-minimal">
+          <span id="distance-current" title="Distancia recorrida en el intervalo seleccionado">
+            <%= totalDistance ? totalDistance.toFixed(2) : '0' %> km
           </span>
         </div>
-        <div class="distance-item">
-          <span class="distance-label">Esta semana:</span>
-          <span id="distance-week" class="distance-value">
+        <div class="distance-resume-mini">
+          <span title="Hoy">H: <span id="distance-day-mini">
+            <%= dailyDistances[new Date().toISOString().split('T')[0]] ? dailyDistances[new Date().toISOString().split('T')[0]].toFixed(2) : '0' %> km
+          </span></span>
+          <span title="Semana">S: <span id="distance-week-mini">
             <% 
               const now = new Date();
               const day = now.getDay() || 7;
@@ -96,17 +78,21 @@
               }
             %>
             <%= weekDistance.toFixed(2) %> km
-          </span>
-        </div>
-        <div class="distance-item">
-          <span class="distance-label">Este mes:</span>
-          <span id="distance-month" class="distance-value">
+          </span></span>
+          <span title="Mes">M: <span id="distance-month-mini">
             <% 
               const currentMonth = now.getFullYear() + '-' + (now.getMonth() + 1);
             %>
             <%= monthlyDistances[currentMonth] ? monthlyDistances[currentMonth].toFixed(2) : '0' %> km
-          </span>
+          </span></span>
         </div>
+      </div>
+    </section>
+
+    <section class="map-section">
+      <h2 class="section-title">Mapa de Recorrido</h2>
+      <div class="map-container">
+        <div id="map"></div>
       </div>
     </section>
   </main>
