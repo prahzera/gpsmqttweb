@@ -1,0 +1,26 @@
+2025/05/03-00:44:47.291 da0 Reusing MANIFEST I:\dev\gpsmqttweb\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/05/03-00:44:47.292 da0 Recovering log #42
+2025/05/03-00:44:47.489 da0 Reusing old log I:\dev\gpsmqttweb\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000042.log 
+2025/05/03-00:44:47.489 da0 Delete type=2 #41
+2025/05/03-00:44:47.489 da0 Delete type=2 #43
+2025/05/03-00:44:49.545 4bf8 Level-0 table #47: started
+2025/05/03-00:44:49.615 4bf8 Level-0 table #47: 619872 bytes OK
+2025/05/03-00:44:49.626 4bf8 Delete type=0 #42
+2025/05/03-00:44:49.626 4bf8 Manual compaction at level-0 from '\x00\x18\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x19\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/05/03-00:44:49.633 4bf8 Level-0 table #49: started
+2025/05/03-00:44:49.681 4bf8 Level-0 table #49: 446 bytes OK
+2025/05/03-00:44:49.691 4bf8 Delete type=0 #46
+2025/05/03-00:44:49.691 4bf8 Manual compaction at level-0 from '\x00\x19\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x1a\x00\x00\x00' @ 0 : 0; will stop at '\x00\x19\x00\x00\x05' @ 173011 : 0
+2025/05/03-00:44:49.691 4bf8 Compacting 1@0 + 1@1 files
+2025/05/03-00:44:49.770 4bf8 Generated table #50@0: 12668 keys, 304918 bytes
+2025/05/03-00:44:49.770 4bf8 Compacted 1@0 + 1@1 files => 304918 bytes
+2025/05/03-00:44:50.068 4bf8 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/05/03-00:44:50.069 4bf8 Delete type=2 #49
+2025/05/03-00:44:50.069 4bf8 Manual compaction at level-0 from '\x00\x19\x00\x00\x05' @ 173011 : 0 .. '\x00\x1a\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/05/03-00:44:52.019 da0 Compacting 1@1 + 1@2 files
+2025/05/03-00:44:52.351 da0 Generated table #51@1: 38039 keys, 1636708 bytes
+2025/05/03-00:44:52.351 da0 Compacted 1@1 + 1@2 files => 1636708 bytes
+2025/05/03-00:44:52.445 da0 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/05/03-00:44:52.445 da0 Delete type=2 #44
+2025/05/03-00:44:52.446 da0 Delete type=2 #47
+2025/05/03-00:44:52.446 da0 Delete type=2 #50

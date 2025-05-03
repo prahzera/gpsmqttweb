@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Configuración para analizar datos del formulario
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Añadimos soporte para JSON
 
 // Configuración de la sesión
 app.use(session({

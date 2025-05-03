@@ -32,18 +32,36 @@
          </div>
          
          <div class="form-content" id="register-form" style="display:none">
-           <form action="/register" method="post" autocomplete="off">
+           <form id="register-form-element" action="javascript:void(0);" autocomplete="off">
                <label for="new-username">Nuevo Usuario:</label>
                <input type="text" id="new-username" name="username" required>
 
                <label for="new-password">Nueva Contraseña:</label>
                <input type="password" id="new-password" name="password" required>
+               
+               <label for="phone-number">Número de WhatsApp (con código de país):</label>
+               <input type="tel" id="phone-number" name="phone" placeholder="+521234567890" required>
 
-               <button type="submit" class="register-btn">Registrarse</button>
+               <button type="submit" class="register-btn" id="request-code-btn">Solicitar Código de Verificación</button>
            </form>
          </div>
        </div>
     </div>
+    
+    <!-- Modal de verificación -->
+    <div id="verification-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Verificación por WhatsApp</h2>
+            <p>Hemos enviado un código de verificación a tu WhatsApp. Por favor, introdúcelo a continuación:</p>
+            <div class="code-input-container">
+                <input type="text" id="verification-code" maxlength="6" placeholder="Código de 6 dígitos" required>
+                <button id="verify-code-btn" class="verify-btn">Verificar</button>
+            </div>
+            <p id="verification-message"></p>
+        </div>
+    </div>
+    
     <script>
       // Animación de entrada para la tarjeta
       document.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +85,120 @@
           loginTab.classList.remove('active');
           registerForm.style.display = 'block';
           loginForm.style.display = 'none';
+        });
+        
+        // Modal de verificación
+        const modal = document.getElementById('verification-modal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const requestCodeBtn = document.getElementById('request-code-btn');
+        const verifyCodeBtn = document.getElementById('verify-code-btn');
+        const verificationMessage = document.getElementById('verification-message');
+        const registerFormElement = document.getElementById('register-form-element');
+        
+        // Cerrar el modal con la X
+        closeBtn.onclick = function() {
+          modal.style.display = 'none';
+        };
+        
+        // Cerrar el modal si se hace clic fuera del mismo
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = 'none';
+          }
+        };
+        
+        // Solicitar código de verificación
+        requestCodeBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          
+          const username = document.getElementById('new-username').value;
+          const password = document.getElementById('new-password').value;
+          const phoneNumber = document.getElementById('phone-number').value;
+          
+          if (!username || !password || !phoneNumber) {
+            alert('Por favor, completa todos los campos.');
+            return;
+          }
+          
+          try {
+            const response = await fetch('/request-verification', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ username, phone: phoneNumber })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              modal.style.display = 'block';
+              verificationMessage.textContent = '';
+            } else {
+              alert(data.message || 'Error al enviar el código de verificación');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error al solicitar el código de verificación');
+          }
+        });
+        
+        // Verificar código
+        verifyCodeBtn.addEventListener('click', async () => {
+          const username = document.getElementById('new-username').value;
+          const password = document.getElementById('new-password').value;
+          const phoneNumber = document.getElementById('phone-number').value;
+          const code = document.getElementById('verification-code').value;
+          
+          if (!code) {
+            verificationMessage.textContent = 'Por favor, ingresa el código de verificación';
+            verificationMessage.style.color = 'red';
+            return;
+          }
+          
+          try {
+            const response = await fetch('/verify-code', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ username, code })
+            });
+            
+            const data = await response.json();
+            
+            if (data.valid) {
+              verificationMessage.textContent = '¡Código verificado correctamente!';
+              verificationMessage.style.color = 'green';
+              
+              // Registrar al usuario
+              setTimeout(async () => {
+                const registerResponse = await fetch('/register', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ username, password, phone: phoneNumber })
+                });
+                
+                if (registerResponse.redirected) {
+                  window.location.href = registerResponse.url;
+                } else {
+                  const registerData = await registerResponse.json();
+                  if (!registerData.success) {
+                    alert(registerData.message || 'Error al registrar usuario');
+                  }
+                }
+              }, 1000);
+            } else {
+              verificationMessage.textContent = data.message || 'Código de verificación incorrecto';
+              verificationMessage.style.color = 'red';
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            verificationMessage.textContent = 'Error al verificar el código';
+            verificationMessage.style.color = 'red';
+          }
         });
       });
     </script>

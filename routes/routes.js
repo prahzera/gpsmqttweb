@@ -2,6 +2,7 @@ const express = require('express');
 const path = require("path");
 const fs = require("fs");
 const router = express.Router();
+const { sendVerificationCode, verifyCode } = require('../utils/whatsappClient');
 
 // Define la ruta al archivo JSON donde se almacenan las coordenadas
 const dataFilePath = path.join(__dirname, "../coordinates.json");
@@ -51,17 +52,18 @@ router.post('/login', (req, res) => {
 
 // Ruta para registrar un nuevo usuario
 router.post('/register', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, phone } = req.body;
   const profiles = readProfiles();
   
   // Verificar si el usuario ya existe
   if (profiles[username]) {
-    return res.redirect('/login'); // El usuario ya existe
+    return res.status(400).json({ success: false, message: 'El usuario ya existe' });
   }
   
   // Añadir el nuevo usuario
   profiles[username] = {
-    contraseña: password
+    contraseña: password,
+    telefono: phone
   };
   
   // Guardar los perfiles actualizados
@@ -70,6 +72,57 @@ router.post('/register', (req, res) => {
   // Iniciar sesión automáticamente
   req.session.user = username;
   res.redirect('/');
+});
+
+// Ruta para solicitar código de verificación por WhatsApp
+router.post('/request-verification', async (req, res) => {
+  const { username, phone } = req.body;
+  
+  // Verificar si el usuario ya existe
+  const profiles = readProfiles();
+  if (profiles[username]) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Este nombre de usuario ya está registrado' 
+    });
+  }
+  
+  try {
+    // Enviar código de verificación por WhatsApp
+    const success = await sendVerificationCode(phone, username);
+    
+    if (success) {
+      return res.json({ success: true });
+    } else {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error al enviar el código de verificación' 
+      });
+    }
+  } catch (error) {
+    console.error('Error al solicitar verificación:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error al procesar la solicitud de verificación' 
+    });
+  }
+});
+
+// Ruta para verificar el código
+router.post('/verify-code', (req, res) => {
+  const { username, code } = req.body;
+  
+  try {
+    // Verificar el código
+    const result = verifyCode(username, code);
+    return res.json(result);
+  } catch (error) {
+    console.error('Error al verificar código:', error);
+    return res.status(500).json({ 
+      valid: false, 
+      message: 'Error al procesar la verificación' 
+    });
+  }
 });
 
 // Ruta para cerrar sesión
