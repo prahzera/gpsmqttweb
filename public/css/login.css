@@ -60,6 +60,41 @@ img:hover {
   transform: scale(1.07) rotate(-2deg);
 }
 
+/* Nuevos estilos para las pestañas */
+.forms-container {
+  width: 100%;
+}
+
+.forms-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  cursor: pointer;
+  color: #5a7167;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #3a4a3f;
+  font-weight: 600;
+  border-bottom: 3px solid #5a7167;
+}
+
+.tab:hover:not(.active) {
+  background-color: rgba(90, 113, 103, 0.06);
+}
+
+.form-content {
+  transition: all 0.3s ease;
+}
+
 h1 {
   margin-top: 0;
   color: #3a4a3f;
@@ -99,7 +134,7 @@ input:focus {
   box-shadow: 0 0 0 2px #b3c6d6;
 }
 
-.login-btn, button {
+.login-btn, .register-btn, button {
   background: linear-gradient(90deg, #5a7167 60%, #7fa6a1 100%);
   color: #ffffff;
   border: none;
@@ -114,7 +149,7 @@ input:focus {
   letter-spacing: 0.5px;
 }
 
-.login-btn:hover, button:hover {
+.login-btn:hover, .register-btn:hover, button:hover {
   background: linear-gradient(90deg, #4a5d4e 60%, #5a7167 100%);
   transform: translateY(-2px) scale(1.03);
 }

@@ -49,6 +49,29 @@ router.post('/login', (req, res) => {
   }
 });
 
+// Ruta para registrar un nuevo usuario
+router.post('/register', (req, res) => {
+  const { username, password } = req.body;
+  const profiles = readProfiles();
+  
+  // Verificar si el usuario ya existe
+  if (profiles[username]) {
+    return res.redirect('/login'); // El usuario ya existe
+  }
+  
+  // Añadir el nuevo usuario
+  profiles[username] = {
+    contraseña: password
+  };
+  
+  // Guardar los perfiles actualizados
+  fs.writeFileSync(profilesFilePath, JSON.stringify(profiles, null, 4));
+  
+  // Iniciar sesión automáticamente
+  req.session.user = username;
+  res.redirect('/');
+});
+
 // Ruta para cerrar sesión
 router.get('/logout', (req, res) => {
   req.session.destroy(err => {
